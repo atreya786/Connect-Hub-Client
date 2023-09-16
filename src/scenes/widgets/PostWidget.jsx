@@ -2,7 +2,7 @@ import {
   ChatBubbleOutlineOutlined,
   FavoriteBorderOutlined,
   FavoriteOutlined,
-  ShareOutlined,
+  DeleteOutline,
 } from "@mui/icons-material";
 import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
@@ -10,7 +10,8 @@ import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPost } from "state";
+import { setPost, removePost } from "state";
+import { toast } from "react-toastify";
 
 const PostWidget = ({
   postId,
@@ -45,6 +46,23 @@ const PostWidget = ({
     });
     const updatedPost = await response.json();
     dispatch(setPost({ post: updatedPost }));
+  };
+
+  const deletePost = async () => {
+    const response = await fetch(`http://localhost:5000/posts/${postId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.ok) {
+      dispatch(removePost(postId));
+      toast.success("Post deleted successfully");
+    } else {
+      console.error("Error deleting post");
+      toast.error("Error deleting post");
+    }
   };
 
   return (
@@ -89,7 +107,7 @@ const PostWidget = ({
         </FlexBetween>
 
         <IconButton>
-          <ShareOutlined />
+          <DeleteOutline onClick={deletePost} />
         </IconButton>
       </FlexBetween>
       {isComments && (

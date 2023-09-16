@@ -15,6 +15,7 @@ import { useDispatch } from "react-redux";
 import { setLogin } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
+import { toast } from "react-toastify"; // Add toast import
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
@@ -56,7 +57,6 @@ const Form = () => {
   const isRegister = pageType === "register";
 
   const register = async (values, onSubmitProps) => {
-    // this allows us to send form info with image
     const formData = new FormData();
     for (let value in values) {
       formData.append(value, values[value]);
@@ -74,6 +74,7 @@ const Form = () => {
     onSubmitProps.resetForm();
 
     if (savedUser) {
+      toast.success("Registration successful!");
       setPageType("login");
     }
   };
@@ -86,14 +87,18 @@ const Form = () => {
     });
     const loggedIn = await loggedInResponse.json();
     onSubmitProps.resetForm();
-    if (loggedIn) {
+
+    if (loggedInResponse.ok) {
       dispatch(
         setLogin({
           user: loggedIn.user,
           token: loggedIn.token,
         })
       );
+      toast.success("Login successful!");
       navigate("/home");
+    } else {
+      toast.error("Login failed. Please check your credentials.");
     }
   };
 

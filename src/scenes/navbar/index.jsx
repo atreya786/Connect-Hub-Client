@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Search, DarkMode, LightMode, Menu, Close } from "@mui/icons-material";
+import { toast } from "react-toastify";
 
 import {
   Box,
@@ -32,6 +33,11 @@ const Navbar = () => {
   const alt = theme.palette.background.alt;
 
   const fullName = `${user.firstName} ${user.lastName}`;
+
+  const handleLogout = () => {
+    dispatch(setLogout());
+    toast.success("Logged out successfully!");
+  };
 
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
@@ -97,7 +103,7 @@ const Navbar = () => {
               <MenuItem value={fullName}>
                 <Typography>{fullName}</Typography>
               </MenuItem>
-              <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
+              <MenuItem onClick={handleLogout}>Log Out</MenuItem>
             </Select>
           </FormControl>
         </FlexBetween>
